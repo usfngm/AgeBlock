@@ -3,6 +3,7 @@ package com.example.ageblock.view;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,13 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.example.ageblock.R;
 import com.example.ageblock.api.API;
 import com.example.ageblock.api.callbacks.GenericReturnCallback;
 import com.example.ageblock.model.User;
 import com.example.ageblock.view.utils.AD;
 import com.example.ageblock.view.utils.PD;
+import com.google.gson.Gson;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,6 +36,31 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         registerComponents();
         registerBtnListeners();
+        checkLoggedIn();
+    }
+
+    private void checkLoggedIn() {
+        SharedPreferences sp = getSharedPreferences("app", 0);
+        if (sp.getString("user", null) != null)
+        {
+            login(User.getLoggedUser(this));
+        }
+    }
+
+    private void login(User u)
+    {
+        // Acc Type Check then go to appropriate dashboard
+        if (u.getType().equals("parent"))
+        {
+            Intent i = new Intent(LoginActivity.this, ParentDashboard.class);
+            startActivity(i);
+            finish();
+        }
+        else {
+            Intent i = new Intent(LoginActivity.this, VolunteerDashboard.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     private void registerBtnListeners() {
@@ -43,30 +69,27 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-
                 hideKeyboard();
 
-                if (TextUtils.isEmpty(emailET.getText()) || TextUtils.isEmpty(passwordET.getText()))
-                {
+                if (TextUtils.isEmpty(emailET.getText()) || TextUtils.isEmpty(passwordET.getText())) {
                     AD.get().init(LoginActivity.this, "Please make sure you have filled in all the fields and try again.");
                     return;
                 }
 
-                if (!isEmailValid(emailET.getText().toString()))
-                {
+                if (!isEmailValid(emailET.getText().toString())) {
                     AD.get().init(LoginActivity.this, "The email you have entered is invalid. Please try again.");
                     return;
                 }
 
                 PD.get().init(LoginActivity.this, "Signing In...").show();
-//                Intent i = new Intent(LoginActivity.this, VolunteerDashboard.class);
-//                startActivity(i);
-//                finish();
+
                 API.getInstance().login(emailET.getText().toString(), passwordET.getText().toString(), new GenericReturnCallback<User>() {
                     @Override
                     public void success(User callback) {
                         Toast.makeText(LoginActivity.this, "Welcome back " + callback.getName(), Toast.LENGTH_LONG).show();
                         PD.get().hide();
+                        saveUser(callback);
+                        login(callback);
                     }
 
                     @Override
@@ -75,6 +98,9 @@ public class LoginActivity extends AppCompatActivity {
                         switch (msg) {
                             case "wrong_creds":
                                 dialog_msg = "Wrong email/password combination, please try again.";
+                                break;
+                            case "no_server":
+                                dialog_msg = "Cannot connect to the server. Please try again.";
                                 break;
                             default:
                                 dialog_msg = msg;
@@ -95,6 +121,13 @@ public class LoginActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
+    }
+
+    private void saveUser(User callback) {
+        SharedPreferences sp = getSharedPreferences("app", 0);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("user", new Gson().toJson(callback));
+        editor.commit();
     }
 
     private void registerComponents() {

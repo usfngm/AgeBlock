@@ -3,14 +3,12 @@ package com.example.ageblock.api;
 import android.util.Log;
 
 import com.example.ageblock.api.callbacks.GenericReturnCallback;
-import com.example.ageblock.api.params.LoginParams;
+import com.example.ageblock.api.params.AuthParams;
 import com.example.ageblock.api.response.AuthResponse;
 import com.example.ageblock.api.response.ErrorResponse;
 import com.example.ageblock.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
 
-    private final String SERVICE_URL = "http://192.168.1.9:3000";
+    private final String SERVICE_URL = "http://192.168.1.2:3000";
 
     private static API _instance;
 
@@ -53,9 +51,37 @@ public class API {
 
     public void login(String email, String password, final GenericReturnCallback<User> i) {
 
-        LoginParams u = new LoginParams(new User(email, password));
+        AuthParams u = new AuthParams(new User(email, password));
 
         Call<AuthResponse> call = api.login(u);
+
+        call.enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                if (response.isSuccessful()) {
+                    User u = response.body().user;
+                    i.success(u);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+    public void register(User u, final GenericReturnCallback<User> i) {
+        AuthParams p = new AuthParams(u);
+        Call<AuthResponse> call = api.register(p);
 
         call.enqueue(new Callback<AuthResponse>() {
             @Override

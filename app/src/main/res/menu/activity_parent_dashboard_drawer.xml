@@ -5,29 +5,33 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/vol_menu_requests"
+            android:id="@+id/parent_menu_requests"
             android:icon="@drawable/ic_assignment_returned_black_36dp"
             android:title="Requests" />
-
         <item
-            android:id="@+id/vol_menu_current"
+            android:id="@+id/parent_menu_current"
             android:icon="@drawable/ic_assignment_black_36dp"
             android:title="View Current" />
+        <item
+            android:id="@+id/parent_menu_history"
+            android:icon="@drawable/ic_history_black_36dp"
+            android:title="View Histoy" />
 
         <item
-            android:id="@+id/vol_menu_history"
-            android:icon="@drawable/ic_history_black_36dp"
-            android:title="View History" />
+            android:id="@+id/parent_menu_elders"
+            android:icon="@drawable/ic_account_box_black_36dp"
+            android:title="View Elders" />
+
     </group>
 
     <item android:title="Profile">
         <menu>
             <item
-                android:id="@+id/vol_menu_profile"
+                android:id="@+id/parent_menu_profile"
                 android:icon="@drawable/ic_account_box_black_36dp"
                 android:title="My Profile" />
             <item
-                android:id="@+id/vol_menu_logout"
+                android:id="@+id/parent_menu_logout"
                 android:icon="@drawable/ic_exit_to_app_black_36dp"
                 android:title="Logout" />
         </menu>

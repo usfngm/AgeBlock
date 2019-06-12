@@ -1,8 +1,9 @@
 package com.example.ageblock.view;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,20 +14,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.ageblock.R;
-import com.example.ageblock.view.utils.BtnPress;
-import com.example.ageblock.view.utils.YesNoAD;
 
-public class VolunteerDashboard extends AppCompatActivity
+public class ParentDashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_volunteer_dashboard);
+        setContentView(R.layout.activity_parent_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.parent_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -38,7 +46,7 @@ public class VolunteerDashboard extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.parent_drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -49,7 +57,7 @@ public class VolunteerDashboard extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.volunteer_dashboard, menu);
+        getMenuInflater().inflate(R.menu.parent_dashboard, menu);
         return true;
     }
 
@@ -74,42 +82,20 @@ public class VolunteerDashboard extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.vol_menu_requests) {
+        if (id == R.id.parent_menu_requests) {
+            // Handle the camera action
+        } else if (id == R.id.parent_menu_history) {
 
-        } else if (id == R.id.vol_menu_history) {
+        } else if (id == R.id.parent_menu_current) {
 
-        } else if (id == R.id.vol_menu_current) {
+        } else if (id == R.id.parent_menu_profile) {
 
-        } else if (id == R.id.vol_menu_profile) {
+        } else if (id == R.id.parent_menu_logout) {
 
-        } else if (id == R.id.vol_menu_logout) {
-            logout();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.parent_drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void logout()
-    {
-        YesNoAD.get().init(this, "Are you sure you want to logout?", new BtnPress() {
-            @Override
-            public void yes() {
-                SharedPreferences sp = getSharedPreferences("app", 0);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent i = new Intent(VolunteerDashboard.this, LoginActivity.class);
-                startActivity(i);
-                finish();
-            }
-
-            @Override
-            public void no() {
-
-            }
-        });
     }
 }
