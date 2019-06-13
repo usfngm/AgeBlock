@@ -4,34 +4,27 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/parent_menu_requests"
-            android:icon="@drawable/ic_assignment_returned_black_36dp"
-            android:title="Pending Requests" />
-        <item
-            android:id="@+id/parent_menu_current"
+            android:id="@+id/elder_menu_current"
             android:icon="@drawable/ic_assignment_black_36dp"
-            android:title="Current Requests" />
+            android:title="My Requests" />
         <item
-            android:id="@+id/parent_menu_history"
+            android:id="@+id/elder_menu_history"
             android:icon="@drawable/ic_history_black_36dp"
             android:title="View History" />
 
-        <item
-            android:id="@+id/parent_menu_elders"
-            android:icon="@drawable/ic_account_box_black_36dp"
-            android:title="View Elders" />
 
     </group>
 
     <item android:title="Profile">
         <menu>
             <item
-                android:id="@+id/parent_menu_profile"
+                android:id="@+id/elder_menu_profile"
                 android:icon="@drawable/ic_account_box_black_36dp"
                 android:title="My Profile" />
             <item
-                android:id="@+id/parent_menu_logout"
+                android:id="@+id/elder_menu_logout"
                 android:icon="@drawable/ic_exit_to_app_black_36dp"
                 android:title="Logout" />
         </menu>

@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
 
-    private final String SERVICE_URL = "http://192.168.1.2:3000";
+    private final String SERVICE_URL = "http://192.168.1.6:3000";
 
     private static API _instance;
 
@@ -79,6 +79,37 @@ public class API {
         });
     }
 
+    public void getUser(User user, final GenericReturnCallback<User> i) {
+
+        AuthParams u = new AuthParams(user);
+
+        Call<AuthResponse> call = api.getUser(u);
+
+        call.enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                if (response.isSuccessful()) {
+                    User u = response.body().user;
+                    i.success(u);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+
     public void register(User u, final GenericReturnCallback<User> i) {
         AuthParams p = new AuthParams(u);
         Call<AuthResponse> call = api.register(p);
@@ -87,6 +118,38 @@ public class API {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful()) {
+                    Log.d("JSON ORIGINAL", new Gson().toJson(response.body().user));
+                    User u = response.body().user;
+                    i.success(u);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        Log.d("ERR", e.getMessage());
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+
+    public void registerElder(User u, final GenericReturnCallback<User> i) {
+        AuthParams p = new AuthParams(u);
+        Call<AuthResponse> call = api.registerElder(p);
+
+        call.enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.d("JSON ORIGINAL", new Gson().toJson(response.body().user));
                     User u = response.body().user;
                     i.success(u);
                 } else {

@@ -1,9 +1,7 @@
 package com.example.ageblock.view;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -21,33 +19,19 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-public class SignupActivity extends AppCompatActivity {
+public class AddElderActivity extends AppCompatActivity {
 
-    private boolean isVolunteerSelected = true;
-    private Button volunteerSelectBtn, parentSelectBtn, signupBtn;
+    private Button signupBtn;
     private EditText nameET, phoneET, nationalIDET, emailET, passwordET, confirmPasswordET;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_add_elder);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         registerComponents();
-        handleSignupSelection();
         registerBtnListeners();
-    }
-
-    private void login(User u) {
-        // Acc Type Check then go to appropriate dashboard
-        if (u.getType().equals("parent")) {
-            Intent i = new Intent(SignupActivity.this, ParentDashboard.class);
-            startActivity(i);
-            finish();
-        } else if (u.getType().equals("volunteer")) {
-            Intent i = new Intent(SignupActivity.this, VolunteerDashboard.class);
-            startActivity(i);
-            finish();
-        }
     }
 
     private void registerBtnListeners() {
@@ -61,26 +45,23 @@ public class SignupActivity extends AppCompatActivity {
                 if (checkConfirmPasswordErr()) return;
 
                 User u = new User(nameET.getText().toString(), phoneET.getText().toString(), nationalIDET.getText().toString(), emailET.getText().toString(), passwordET.getText().toString());
-                if (isVolunteerSelected) {
-                    u.setType("volunteer");
-                    u.setVolunteer_skills(new ArrayList());
-                } else {
-                    u.setType("parent");
-                    u.setParent_elders(new ArrayList());
-                }
+                u.setType("elder");
+                u.setElder_parentID(User.getLoggedUser(AddElderActivity.this).getUid());
 
                 Log.d("JSON SENT", new Gson().toJson(u));
 
 
-                PD.get().init(SignupActivity.this, "Please Wait...").show();
+                PD.get().init(AddElderActivity.this, "Please Wait...").show();
 
-                API.getInstance().register(u, new GenericReturnCallback<User>() {
+                API.getInstance().registerElder(u, new GenericReturnCallback<User>() {
                     @Override
                     public void success(User callback) {
-                        Toast.makeText(SignupActivity.this, "Your account has been created", Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddElderActivity.this, "Elder Added", Toast.LENGTH_LONG).show();
                         PD.get().hide();
-                        User.saveUser(SignupActivity.this, new Gson().toJson(callback));
-                        login(callback);
+                        User updatedUser = User.getLoggedUser(AddElderActivity.this);
+                        updatedUser.getParent_elders().add(callback.getUid());
+                        User.saveUser(AddElderActivity.this, new Gson().toJson(updatedUser));
+                        finish();
                     }
 
                     @Override
@@ -97,7 +78,7 @@ public class SignupActivity extends AppCompatActivity {
                                 dialog_msg = msg;
                         }
 
-                        AD.get().init(SignupActivity.this, dialog_msg);
+                        AD.get().init(AddElderActivity.this, dialog_msg);
                         PD.get().hide();
                     }
                 });
@@ -106,9 +87,15 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
+
     private boolean checkEmailValidErr() {
         if (!isEmailValid(emailET.getText().toString())) {
-            AD.get().init(SignupActivity.this, "The email you have entered is invalid. Please try again.");
+            AD.get().init(AddElderActivity.this, "The email you have entered is invalid. Please try again.");
             return true;
         }
         return false;
@@ -116,7 +103,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private boolean checkConfirmPasswordErr() {
         if (!passwordET.getText().toString().equals(confirmPasswordET.getText().toString())) {
-            AD.get().init(SignupActivity.this, "The Passwords you have entered does not match. Please try again.");
+            AD.get().init(AddElderActivity.this, "The Passwords you have entered does not match. Please try again.");
             return true;
         }
         return false;
@@ -129,7 +116,7 @@ public class SignupActivity extends AppCompatActivity {
                 TextUtils.isEmpty(emailET.getText()) ||
                 TextUtils.isEmpty(passwordET.getText()) ||
                 TextUtils.isEmpty(confirmPasswordET.getText())) {
-            AD.get().init(SignupActivity.this, "Please make sure you have filled in all the fields and try again.");
+            AD.get().init(AddElderActivity.this, "Please make sure you have filled in all the fields and try again.");
             return true;
         }
         return false;
@@ -139,43 +126,7 @@ public class SignupActivity extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
-    }
-
-    private void handleSignupSelection() {
-        volunteerSelectBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isVolunteerSelected) {
-                    volunteerSelectBtn.setBackgroundResource(R.drawable.signup_selected);
-                    parentSelectBtn.setBackgroundResource(R.drawable.signup_not_selected);
-                    isVolunteerSelected = true;
-                    volunteerSelectBtn.setTextColor(Color.WHITE);
-                    parentSelectBtn.setTextColor(Color.BLACK);
-                }
-            }
-        });
-
-        parentSelectBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isVolunteerSelected) {
-                    volunteerSelectBtn.setBackgroundResource(R.drawable.signup_not_selected);
-                    parentSelectBtn.setBackgroundResource(R.drawable.signup_selected);
-                    isVolunteerSelected = false;
-                    volunteerSelectBtn.setTextColor(Color.BLACK);
-                    parentSelectBtn.setTextColor(Color.WHITE);
-                }
-            }
-        });
-    }
-
     private void registerComponents() {
-        volunteerSelectBtn = (Button) findViewById(R.id.signup_volunteerBtn);
-        parentSelectBtn = (Button) findViewById(R.id.signup_parentBtn);
         nameET = (EditText) findViewById(R.id.signup_nameET);
         phoneET = (EditText) findViewById(R.id.signup_phoneET);
         nationalIDET = (EditText) findViewById(R.id.signup_nationalIDET);

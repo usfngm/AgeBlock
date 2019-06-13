@@ -1,15 +1,11 @@
 package com.example.ageblock.view;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -41,23 +37,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkLoggedIn() {
         SharedPreferences sp = getSharedPreferences("app", 0);
-        if (sp.getString("user", null) != null)
-        {
+        if (sp.getString("user", null) != null) {
             login(User.getLoggedUser(this));
         }
     }
 
-    private void login(User u)
-    {
+    private void login(User u) {
         // Acc Type Check then go to appropriate dashboard
-        if (u.getType().equals("parent"))
-        {
+        if (u.getType().equals("parent")) {
             Intent i = new Intent(LoginActivity.this, ParentDashboard.class);
             startActivity(i);
             finish();
-        }
-        else {
+        } else if (u.getType().equals("volunteer")) {
             Intent i = new Intent(LoginActivity.this, VolunteerDashboard.class);
+            startActivity(i);
+            finish();
+        } else if (u.getType().equals("elder")) {
+            Intent i = new Intent(LoginActivity.this, ElderDashboard.class);
             startActivity(i);
             finish();
         }
@@ -88,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void success(User callback) {
                         Toast.makeText(LoginActivity.this, "Welcome back " + callback.getName(), Toast.LENGTH_LONG).show();
                         PD.get().hide();
-                        saveUser(callback);
+                        User.saveUser(LoginActivity.this, new Gson().toJson(callback));
                         login(callback);
                     }
 
@@ -123,12 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveUser(User callback) {
-        SharedPreferences sp = getSharedPreferences("app", 0);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("user", new Gson().toJson(callback));
-        editor.commit();
-    }
+
 
     private void registerComponents() {
         loginBtn = (Button) findViewById(R.id.login_loginBtn);

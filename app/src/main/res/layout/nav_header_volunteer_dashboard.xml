@@ -24,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Farah Eid"
+        android:id="@+id/volunteer_usernameTV"
+        android:text="Android User"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView

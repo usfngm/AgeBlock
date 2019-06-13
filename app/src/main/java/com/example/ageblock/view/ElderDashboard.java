@@ -3,6 +3,9 @@ package com.example.ageblock.view;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -11,29 +14,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.example.ageblock.R;
-import com.example.ageblock.model.User;
 import com.example.ageblock.view.utils.BtnPress;
 import com.example.ageblock.view.utils.YesNoAD;
 
-public class VolunteerDashboard extends AppCompatActivity
+public class ElderDashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    TextView usernameTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_volunteer_dashboard);
+        setContentView(R.layout.activity_elder_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        registerComponents();
 
-        usernameTV.setText(User.getLoggedUser(this).getName());
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -43,14 +39,9 @@ public class VolunteerDashboard extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void registerComponents() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        usernameTV = (TextView) navigationView.getHeaderView(0).findViewById(R.id.volunteer_usernameTV);
-    }
-
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -61,7 +52,7 @@ public class VolunteerDashboard extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.volunteer_dashboard, menu);
+        getMenuInflater().inflate(R.menu.elder_dashboard, menu);
         return true;
     }
 
@@ -86,25 +77,23 @@ public class VolunteerDashboard extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.vol_menu_requests) {
+        if (id == R.id.elder_menu_current) {
+            // Handle the camera action
+        } else if (id == R.id.elder_menu_history) {
 
-        } else if (id == R.id.vol_menu_history) {
-
-        } else if (id == R.id.vol_menu_current) {
-
-        } else if (id == R.id.vol_menu_profile) {
-
-        } else if (id == R.id.vol_menu_logout) {
+        } else if (id == R.id.elder_menu_logout) {
             logout();
+        } else if (id == R.id.elder_menu_profile) {
+
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void logout()
-    {
+
+    private void logout() {
         YesNoAD.get().init(this, "Are you sure you want to logout?", new BtnPress() {
             @Override
             public void yes() {
@@ -113,7 +102,7 @@ public class VolunteerDashboard extends AppCompatActivity
                 editor.clear();
                 editor.commit();
 
-                Intent i = new Intent(VolunteerDashboard.this, LoginActivity.class);
+                Intent i = new Intent(ElderDashboard.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }

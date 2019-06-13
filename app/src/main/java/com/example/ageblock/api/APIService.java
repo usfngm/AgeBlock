@@ -12,7 +12,13 @@ public interface APIService {
     @POST("/login")
     Call<AuthResponse> login(@Body AuthParams user);
 
+    @POST("/getUser")
+    Call<AuthResponse> getUser(@Body AuthParams user);
+
     @POST("/register")
     Call<AuthResponse> register(@Body AuthParams user);
+
+    @POST("/registerElder")
+    Call<AuthResponse> registerElder(@Body AuthParams user);
 
 }

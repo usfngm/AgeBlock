@@ -13,9 +13,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.ParentDashboard"
-            android:label="@string/title_activity_parent_dashboard"
+            android:name=".view.ElderDashboard"
+            android:label="Dashboard"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".view.AddElderActivity"
+            android:label="Add Elder" />
+        <activity
+            android:name=".view.ParentDashboard"
+            android:label="Dashboard"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.SignupActivity"
             android:label="Signup" />
