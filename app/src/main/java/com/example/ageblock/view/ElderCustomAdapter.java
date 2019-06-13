@@ -14,7 +14,7 @@ import com.example.ageblock.model.User;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends ArrayAdapter<User> implements View.OnClickListener{
+public class ElderCustomAdapter extends ArrayAdapter<User> implements View.OnClickListener{
 
     private ArrayList<User> elders;
     Context mContext;
@@ -24,7 +24,7 @@ public class CustomAdapter extends ArrayAdapter<User> implements View.OnClickLis
         TextView txtName;
     }
 
-    public CustomAdapter(ArrayList<User> data, Context context) {
+    public ElderCustomAdapter(ArrayList<User> data, Context context) {
         super(context, R.layout.parent_elder_list_item, data);
         this.elders = data;
         this.mContext=context;

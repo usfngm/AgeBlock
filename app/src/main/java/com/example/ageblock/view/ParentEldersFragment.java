@@ -25,7 +25,7 @@ public class ParentEldersFragment extends Fragment {
 
     ArrayList<User> elders;
 
-    CustomAdapter adapter;
+    ElderCustomAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class ParentEldersFragment extends Fragment {
             elders.add(u);
         }
 
-        adapter = new CustomAdapter(elders, getActivity());
+        adapter = new ElderCustomAdapter(elders, getActivity());
 
         eldersLV.setAdapter(adapter);
     }

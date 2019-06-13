@@ -39,12 +39,12 @@ public class VolunteerDashboard extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.elder_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void registerComponents() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.elder_nav_view);
         usernameTV = (TextView) navigationView.getHeaderView(0).findViewById(R.id.volunteer_usernameTV);
     }
 

@@ -8,4 +8,9 @@
     tools:context=".view.ElderDashboard"
     tools:showIn="@layout/app_bar_elder_dashboard">
 
+    <FrameLayout
+        android:id="@+id/elder_content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </android.support.constraint.ConstraintLayout>
