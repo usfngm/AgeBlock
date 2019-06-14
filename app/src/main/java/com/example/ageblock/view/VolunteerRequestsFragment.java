@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
@@ -33,6 +34,7 @@ public class VolunteerRequestsFragment extends Fragment {
     ListView requestsLV;
     ArrayList<Request> requests;
     RequestCustomAdapter adapter;
+    TextView noTV;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +67,13 @@ public class VolunteerRequestsFragment extends Fragment {
                 requests = new ArrayList(callback);
                 adapter = new RequestCustomAdapter(requests, getActivity());
                 requestsLV.setAdapter(adapter);
+                if (requests.size() > 0) {
+                    requestsLV.setVisibility(View.VISIBLE);
+                    noTV.setVisibility(View.GONE);
+                } else {
+                    requestsLV.setVisibility(View.GONE);
+                    noTV.setVisibility(View.VISIBLE);
+                }
                 PD.get().hide();
             }
 
@@ -91,6 +100,7 @@ public class VolunteerRequestsFragment extends Fragment {
 
 
     private void registerComponents(View v) {
+        noTV = (TextView) v.findViewById(R.id.general_request_noTV);
         requestsLV = (ListView) v.findViewById(R.id.general_request_listview);
         requestsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -100,7 +110,7 @@ public class VolunteerRequestsFragment extends Fragment {
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                         .setCancelable(false)
                         .setTitle("Accept Request")
-                        .setMessage(requests.get(position).getTextInfo())
+                        .setMessage(requests.get(position).getTextInfoElder() + "\n\n\nAre you sure you want to apply?")
                         .addButton("Apply", Color.WHITE, Color.parseColor("#e38418"), CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -108,6 +118,7 @@ public class VolunteerRequestsFragment extends Fragment {
                                 Request r = requests.get(position);
                                 r.setStatus(1);
                                 r.setVolunteerID(User.getLoggedUser(getActivity()).getUid());
+                                r.setVolunteer(User.getLoggedUser(getActivity()));
                                 API.getInstance().newRequest(r, new GenericReturnCallback<Request>() {
                                     @Override
                                     public void success(Request callback) {

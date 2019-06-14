@@ -101,14 +101,18 @@ public class ParentDashboard extends AppCompatActivity
 
         if (id == R.id.parent_menu_requests) {
             fragment = new ParentRequestsFragment();
+            getSupportActionBar().setTitle("Pending Requests");
         } else if (id == R.id.parent_menu_history) {
             fragment = new ParentHistoryFragment();
+            getSupportActionBar().setTitle("Historical Requests");
         } else if (id == R.id.parent_menu_current) {
             fragment = new ParentCurrentFragment();
+            getSupportActionBar().setTitle("Current Requests");
         } else if (id == R.id.parent_menu_profile) {
 
         } else if (id == R.id.parent_menu_elders) {
             fragment = new ParentEldersFragment();
+            getSupportActionBar().setTitle("Elders");
         } else if (id == R.id.parent_menu_logout) {
             logout();
         }

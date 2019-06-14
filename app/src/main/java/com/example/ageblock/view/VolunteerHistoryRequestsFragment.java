@@ -24,7 +24,7 @@ import com.example.ageblock.view.utils.PD;
 
 import java.util.ArrayList;
 
-public class ParentHistoryFragment extends Fragment {
+public class VolunteerHistoryRequestsFragment extends Fragment {
 
     Button newRequestBtn;
     String[] requestTypes = new String[]{"Befriending", "Home Care Nurses", "Call Consultant", "Volunteer", "Maintenance Worker", "Chef"};
@@ -107,17 +107,15 @@ public class ParentHistoryFragment extends Fragment {
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                         .setCancelable(false)
                         .setTitle("Request Details")
-                        .setMessage(requests.get(position).getTextInfoVolunteer())
-                        .addButton("OK", Color.WHITE, Color.parseColor("#e38418"), CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                        .setMessage(requests.get(position).getTextInfoElder())
+                        .addButton("Done", Color.WHITE, Color.parseColor("#e38418"), CFAlertDialog.CFAlertActionStyle.POSITIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 dialog.dismiss();
                             }
                         });
                 builder.show();
             }
-
         });
     }
 }

@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
 
-    private final String SERVICE_URL = "http://192.168.1.2:3000";
+    private final String SERVICE_URL = "http://192.168.1.6:3000";
 
     private static API _instance;
 

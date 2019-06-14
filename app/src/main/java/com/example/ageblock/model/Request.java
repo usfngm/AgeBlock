@@ -7,6 +7,7 @@ public class Request {
     private String parentID;
     private User elder;
     private String elderID;
+    private User volunteer;
     private String volunteerID;
     private int status;
 
@@ -15,6 +16,14 @@ public class Request {
 
     private boolean notifiedVolunteer = false;
     private boolean notifiedParent = false;
+
+    public User getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(User volunteer) {
+        this.volunteer = volunteer;
+    }
 
     public String getType() {
         return type;
@@ -77,17 +86,27 @@ public class Request {
         else if (status == 1) return "Pending Parent Approval";
         else if (status == 2) return "In Progress";
         else if (status == 3) return "Finished";
-        return  null;
+        return null;
     }
 
-    public String getTextInfo() {
+    public String getTextInfoElder() {
         String result = "Type: " + type;
         result += "\nStatus: " + getStatusText();
         result += "\n\nBy: " + elder.getName();
         result += "\nPhone: " + elder.getPhone();
         result += "\nNational ID: " + elder.getNationalID();
         result += "\nEmail: " + elder.getEmail();
-        result += "\n\n\nAre you sure you want to apply?";
+
+        return result;
+    }
+
+    public String getTextInfoVolunteer() {
+        String result = "Type: " + type;
+        result += "\nStatus: " + getStatusText();
+        result += "\n\nVolunteer: " + volunteer.getName();
+        result += "\nPhone: " + volunteer.getPhone();
+        result += "\nNational ID: " + volunteer.getNationalID();
+        result += "\nEmail: " + volunteer.getEmail();
 
         return result;
     }

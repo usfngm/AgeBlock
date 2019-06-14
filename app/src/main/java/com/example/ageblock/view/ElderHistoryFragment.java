@@ -24,7 +24,7 @@ import com.example.ageblock.view.utils.PD;
 
 import java.util.ArrayList;
 
-public class ParentHistoryFragment extends Fragment {
+public class ElderHistoryFragment extends Fragment {
 
     Button newRequestBtn;
     String[] requestTypes = new String[]{"Befriending", "Home Care Nurses", "Call Consultant", "Volunteer", "Maintenance Worker", "Chef"};

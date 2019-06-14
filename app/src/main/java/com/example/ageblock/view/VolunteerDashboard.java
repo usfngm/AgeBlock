@@ -54,11 +54,13 @@ public class VolunteerDashboard extends AppCompatActivity
 
         if (id == R.id.vol_menu_requests) {
             fragment = new VolunteerRequestsFragment();
-            getSupportActionBar().setTitle("Requests");
+            getSupportActionBar().setTitle("All Requests");
         } else if (id == R.id.vol_menu_history) {
-
+            fragment = new VolunteerHistoryRequestsFragment();
+            getSupportActionBar().setTitle("Historical Requests");
         } else if (id == R.id.vol_menu_current) {
-
+            fragment = new VolunteerCurrentRequestsFragment();
+            getSupportActionBar().setTitle("My Requests");
         } else if (id == R.id.vol_menu_profile) {
 
         } else if (id == R.id.vol_menu_logout) {

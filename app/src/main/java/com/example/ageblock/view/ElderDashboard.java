@@ -13,13 +13,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.ageblock.R;
+import com.example.ageblock.model.User;
 import com.example.ageblock.view.utils.BtnPress;
 import com.example.ageblock.view.utils.YesNoAD;
 
 public class ElderDashboard extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    TextView usernameTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,9 @@ public class ElderDashboard extends AppCompatActivity
         setContentView(R.layout.activity_elder_dashboard);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        registerComponents();
+
+        usernameTV.setText(User.getLoggedUser(this).getName());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.elder_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +48,12 @@ public class ElderDashboard extends AppCompatActivity
         displaySelectedScreen(R.id.elder_menu_current);
     }
 
+    private void registerComponents() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.elder_nav_view);
+        usernameTV = (TextView) navigationView.getHeaderView(0).findViewById(R.id.elder_usernameTV);
+    }
+
+
     private void displaySelectedScreen(int id) {
         //creating fragment object
         Fragment fragment = null;
@@ -49,7 +62,8 @@ public class ElderDashboard extends AppCompatActivity
             fragment = new ElderMyRequestsFragment();
             getSupportActionBar().setTitle("My Requests");
         } else if (id == R.id.elder_menu_history) {
-
+            fragment = new ElderHistoryFragment();
+            getSupportActionBar().setTitle("Historical Requests");
         } else if (id == R.id.elder_menu_logout) {
             logout();
         } else if (id == R.id.elder_menu_profile) {

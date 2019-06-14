@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -55,8 +56,7 @@ public class ElderMyRequestsFragment extends Fragment {
         fetchData();
     }
 
-    private void fetchData()
-    {
+    private void fetchData() {
         PD.get().init(getActivity(), "Please Wait...").show();
 
         API.getInstance().getCurrentRequests(User.getLoggedUser(getActivity()), new GenericReturnCallback<ArrayList<Request>>() {
@@ -157,5 +157,25 @@ public class ElderMyRequestsFragment extends Fragment {
     private void registerComponents(View v) {
         newRequestBtn = (Button) v.findViewById(R.id.elder_addTaskBtn);
         requestsLV = (ListView) v.findViewById(R.id.elder_task_listview);
+        requestsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (requests.get(position).getStatus() > 0) {
+                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getActivity())
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
+                            .setCancelable(false)
+                            .setTitle("Request Details")
+                            .setMessage(requests.get(position).getTextInfoVolunteer())
+                            .addButton("OK", Color.WHITE, Color.parseColor("#e38418"), CFAlertDialog.CFAlertActionStyle.NEGATIVE, CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    dialog.dismiss();
+                                }
+                            });
+                    builder.show();
+                }
+            }
+        });
     }
 }
