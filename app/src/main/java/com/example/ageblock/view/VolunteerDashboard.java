@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -41,6 +43,38 @@ public class VolunteerDashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.elder_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+        displaySelectedScreen(R.id.vol_menu_requests);
+    }
+
+    private void displaySelectedScreen(int id) {
+        //creating fragment object
+        Fragment fragment = null;
+
+        if (id == R.id.vol_menu_requests) {
+            fragment = new VolunteerRequestsFragment();
+            getSupportActionBar().setTitle("Requests");
+        } else if (id == R.id.vol_menu_history) {
+
+        } else if (id == R.id.vol_menu_current) {
+
+        } else if (id == R.id.vol_menu_profile) {
+
+        } else if (id == R.id.vol_menu_logout) {
+            logout();
+        }
+
+        //replacing the fragment
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.volunteer_content_frame, fragment);
+            ft.commit();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
     }
 
     private void registerComponents() {
@@ -83,28 +117,12 @@ public class VolunteerDashboard extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.vol_menu_requests) {
-
-        } else if (id == R.id.vol_menu_history) {
-
-        } else if (id == R.id.vol_menu_current) {
-
-        } else if (id == R.id.vol_menu_profile) {
-
-        } else if (id == R.id.vol_menu_logout) {
-            logout();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.vol_drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        //calling the method displayselectedscreen and passing the id of selected menu
+        displaySelectedScreen(item.getItemId());
         return true;
     }
 
-    private void logout()
-    {
+    private void logout() {
         YesNoAD.get().init(this, "Are you sure you want to logout?", new BtnPress() {
             @Override
             public void yes() {

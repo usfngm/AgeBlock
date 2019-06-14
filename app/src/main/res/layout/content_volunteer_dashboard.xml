@@ -8,9 +8,10 @@
     tools:context=".view.VolunteerDashboard"
     tools:showIn="@layout/app_bar_volunteer_dashboard">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello There Volunteer"/>
+    <FrameLayout
+        android:id="@+id/volunteer_content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>

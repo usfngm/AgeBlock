@@ -36,6 +36,9 @@ public class ElderDashboard extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.elder_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+        displaySelectedScreen(R.id.elder_menu_current);
     }
 
     private void displaySelectedScreen(int id) {
@@ -44,6 +47,7 @@ public class ElderDashboard extends AppCompatActivity
 
         if (id == R.id.elder_menu_current) {
             fragment = new ElderMyRequestsFragment();
+            getSupportActionBar().setTitle("My Requests");
         } else if (id == R.id.elder_menu_history) {
 
         } else if (id == R.id.elder_menu_logout) {

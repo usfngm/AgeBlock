@@ -4,11 +4,17 @@ import android.util.Log;
 
 import com.example.ageblock.api.callbacks.GenericReturnCallback;
 import com.example.ageblock.api.params.AuthParams;
+import com.example.ageblock.api.params.RequestParams;
 import com.example.ageblock.api.response.AuthResponse;
 import com.example.ageblock.api.response.ErrorResponse;
+import com.example.ageblock.api.response.RequestResponse;
+import com.example.ageblock.api.response.RequestResponseList;
+import com.example.ageblock.model.Request;
 import com.example.ageblock.model.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
 
-    private final String SERVICE_URL = "http://192.168.1.6:3000";
+    private final String SERVICE_URL = "http://192.168.1.2:3000";
 
     private static API _instance;
 
@@ -109,6 +115,113 @@ public class API {
         });
     }
 
+    public void getCurrentRequests(User u, final GenericReturnCallback<ArrayList<Request>> i) {
+        AuthParams p = new AuthParams(u);
+        Call<RequestResponseList> call = api.getCurrentRequests(p);
+        call.enqueue(new Callback<RequestResponseList>() {
+            @Override
+            public void onResponse(Call<RequestResponseList> call, Response<RequestResponseList> response) {
+                if (response.isSuccessful()) {
+                    i.success(response.body().requests);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        Log.d("ERR", e.getMessage());
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestResponseList> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+    public void getHistoryRequests(User u, final GenericReturnCallback<ArrayList<Request>> i) {
+        AuthParams p = new AuthParams(u);
+        Call<RequestResponseList> call = api.getHistoryRequests(p);
+        call.enqueue(new Callback<RequestResponseList>() {
+            @Override
+            public void onResponse(Call<RequestResponseList> call, Response<RequestResponseList> response) {
+                if (response.isSuccessful()) {
+                    i.success(response.body().requests);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        Log.d("ERR", e.getMessage());
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestResponseList> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+    public void getAllPendingRequests(User u, final GenericReturnCallback<ArrayList<Request>> i) {
+        AuthParams p = new AuthParams(u);
+        Call<RequestResponseList> call = api.getAllPendingRequests(p);
+        call.enqueue(new Callback<RequestResponseList>() {
+            @Override
+            public void onResponse(Call<RequestResponseList> call, Response<RequestResponseList> response) {
+                if (response.isSuccessful()) {
+                    i.success(response.body().requests);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        Log.d("ERR", e.getMessage());
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestResponseList> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
+    public void newRequest(Request r, final GenericReturnCallback<Request> i) {
+        RequestParams p = new RequestParams(r);
+        Call<RequestResponse> call = api.newRequest(p);
+        call.enqueue(new Callback<RequestResponse>() {
+            @Override
+            public void onResponse(Call<RequestResponse> call, Response<RequestResponse> response) {
+                if (response.isSuccessful()) {
+                    i.success(response.body().request);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        Log.d("ERR", e.getMessage());
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestResponse> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
 
     public void register(User u, final GenericReturnCallback<User> i) {
         AuthParams p = new AuthParams(u);
