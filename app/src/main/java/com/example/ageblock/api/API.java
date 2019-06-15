@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class API {
 
-    private final String SERVICE_URL = "http://192.168.1.6:3000";
+    private final String SERVICE_URL = "https://us-central1-ageblock-96602.cloudfunctions.net/api/";
 
     private static API _instance;
 
@@ -54,6 +54,38 @@ public class API {
         }
         return _instance;
     }
+
+    public void login(User user, final GenericReturnCallback<User> i) {
+
+        AuthParams u = new AuthParams(user);
+        Log.d("DEBUG", new Gson().toJson(u));
+
+        Call<AuthResponse> call = api.login(u);
+
+        call.enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                if (response.isSuccessful()) {
+                    User u = response.body().user;
+                    i.success(u);
+                } else {
+                    try {
+                        ErrorResponse error = new Gson().fromJson(response.errorBody().string(), ErrorResponse.class);
+                        i.error(error.msg);
+                    } catch (Exception e) {
+                        i.error("unknown");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                Log.d("API", "API ERROR " + t.getMessage());
+                i.error("no_server");
+            }
+        });
+    }
+
 
     public void login(String email, String password, final GenericReturnCallback<User> i) {
 

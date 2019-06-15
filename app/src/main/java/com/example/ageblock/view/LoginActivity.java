@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -18,13 +20,18 @@ import com.example.ageblock.api.callbacks.GenericReturnCallback;
 import com.example.ageblock.model.User;
 import com.example.ageblock.view.utils.AD;
 import com.example.ageblock.view.utils.PD;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 public class LoginActivity extends AppCompatActivity {
 
     Button loginBtn, signupBtn;
     EditText emailET, passwordET;
-
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         registerComponents();
         registerBtnListeners();
         checkLoggedIn();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private void checkLoggedIn() {
@@ -59,53 +67,128 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void loginFirebase() {
+        hideKeyboard();
+
+        if (TextUtils.isEmpty(emailET.getText()) || TextUtils.isEmpty(passwordET.getText())) {
+            AD.get().init(LoginActivity.this, "Please make sure you have filled in all the fields and try again.");
+            return;
+        }
+
+        if (!isEmailValid(emailET.getText().toString())) {
+            AD.get().init(LoginActivity.this, "The email you have entered is invalid. Please try again.");
+            return;
+        }
+
+        PD.get().init(LoginActivity.this, "Signing In...").show();
+
+
+        mAuth.signInWithEmailAndPassword(emailET.getText().toString(), passwordET.getText().toString())
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("TAG", "signInWithEmail:success");
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            Log.d("TAG", firebaseUser.getUid());
+                            User u = new User();
+                            u.setUid(firebaseUser.getUid());
+                            API.getInstance().login(u, new GenericReturnCallback<User>() {
+                                @Override
+                                public void success(User callback) {
+                                    Toast.makeText(LoginActivity.this, "Welcome back " + callback.getName(), Toast.LENGTH_LONG).show();
+                                    PD.get().hide();
+                                    User.saveUser(LoginActivity.this, new Gson().toJson(callback));
+                                    login(callback);
+                                }
+
+                                @Override
+                                public void error(String msg) {
+                                    String dialog_msg = "";
+                                    switch (msg) {
+                                        case "wrong_creds":
+                                            dialog_msg = "Wrong email/password combination, please try again.";
+                                            break;
+                                        case "no_server":
+                                            dialog_msg = "Cannot connect to the server. Please try again.";
+                                            break;
+                                        default:
+                                            dialog_msg = msg;
+                                    }
+
+                                    AD.get().init(LoginActivity.this, dialog_msg);
+                                    PD.get().hide();
+                                }
+                            });
+                            //updateUI(user);
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("TAG", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                            AD.get().init(LoginActivity.this, task.getException().toString());
+                            PD.get().hide();
+                        }
+
+
+                    }
+                });
+    }
+
+    private void loginRegular() {
+        hideKeyboard();
+
+        if (TextUtils.isEmpty(emailET.getText()) || TextUtils.isEmpty(passwordET.getText())) {
+            AD.get().init(LoginActivity.this, "Please make sure you have filled in all the fields and try again.");
+            return;
+        }
+
+        if (!isEmailValid(emailET.getText().toString())) {
+            AD.get().init(LoginActivity.this, "The email you have entered is invalid. Please try again.");
+            return;
+        }
+
+        PD.get().init(LoginActivity.this, "Signing In...").show();
+
+        API.getInstance().login(emailET.getText().toString(), passwordET.getText().toString(), new GenericReturnCallback<User>() {
+            @Override
+            public void success(User callback) {
+                Toast.makeText(LoginActivity.this, "Welcome back " + callback.getName(), Toast.LENGTH_LONG).show();
+                PD.get().hide();
+                User.saveUser(LoginActivity.this, new Gson().toJson(callback));
+                login(callback);
+            }
+
+            @Override
+            public void error(String msg) {
+                String dialog_msg = "";
+                switch (msg) {
+                    case "wrong_creds":
+                        dialog_msg = "Wrong email/password combination, please try again.";
+                        break;
+                    case "no_server":
+                        dialog_msg = "Cannot connect to the server. Please try again.";
+                        break;
+                    default:
+                        dialog_msg = msg;
+                }
+
+                AD.get().init(LoginActivity.this, dialog_msg);
+                PD.get().hide();
+            }
+        });
+    }
+
     private void registerBtnListeners() {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                loginFirebase();
 
-                hideKeyboard();
-
-                if (TextUtils.isEmpty(emailET.getText()) || TextUtils.isEmpty(passwordET.getText())) {
-                    AD.get().init(LoginActivity.this, "Please make sure you have filled in all the fields and try again.");
-                    return;
-                }
-
-                if (!isEmailValid(emailET.getText().toString())) {
-                    AD.get().init(LoginActivity.this, "The email you have entered is invalid. Please try again.");
-                    return;
-                }
-
-                PD.get().init(LoginActivity.this, "Signing In...").show();
-
-                API.getInstance().login(emailET.getText().toString(), passwordET.getText().toString(), new GenericReturnCallback<User>() {
-                    @Override
-                    public void success(User callback) {
-                        Toast.makeText(LoginActivity.this, "Welcome back " + callback.getName(), Toast.LENGTH_LONG).show();
-                        PD.get().hide();
-                        User.saveUser(LoginActivity.this, new Gson().toJson(callback));
-                        login(callback);
-                    }
-
-                    @Override
-                    public void error(String msg) {
-                        String dialog_msg = "";
-                        switch (msg) {
-                            case "wrong_creds":
-                                dialog_msg = "Wrong email/password combination, please try again.";
-                                break;
-                            case "no_server":
-                                dialog_msg = "Cannot connect to the server. Please try again.";
-                                break;
-                            default:
-                                dialog_msg = msg;
-                        }
-
-                        AD.get().init(LoginActivity.this, dialog_msg);
-                        PD.get().hide();
-                    }
-                });
             }
         });
 
@@ -118,7 +201,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
     private void registerComponents() {

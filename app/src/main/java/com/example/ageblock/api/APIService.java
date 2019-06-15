@@ -12,28 +12,28 @@ import retrofit2.http.POST;
 
 public interface APIService {
 
-    @POST("/login")
+    @POST("login")
     Call<AuthResponse> login(@Body AuthParams user);
 
-    @POST("/getUser")
+    @POST("getUser")
     Call<AuthResponse> getUser(@Body AuthParams user);
 
-    @POST("/register")
+    @POST("register")
     Call<AuthResponse> register(@Body AuthParams user);
 
-    @POST("/registerElder")
+    @POST("registerElder")
     Call<AuthResponse> registerElder(@Body AuthParams user);
 
-    @POST("/request")
+    @POST("request")
     Call<RequestResponse> newRequest(@Body RequestParams request);
 
-    @POST("/currentRequests")
+    @POST("currentRequests")
     Call<RequestResponseList> getCurrentRequests(@Body AuthParams user);
 
-    @POST("/historyRequests")
+    @POST("historyRequests")
     Call<RequestResponseList> getHistoryRequests(@Body AuthParams user);
 
-    @POST("/allPendingRequests")
+    @POST("allPendingRequests")
     Call<RequestResponseList> getAllPendingRequests(@Body AuthParams user);
 
 }
