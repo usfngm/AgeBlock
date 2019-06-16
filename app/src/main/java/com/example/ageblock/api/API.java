@@ -90,9 +90,7 @@ public class API {
     public void login(String email, String password, final GenericReturnCallback<User> i) {
 
         AuthParams u = new AuthParams(new User(email, password));
-
         Call<AuthResponse> call = api.login(u);
-
         call.enqueue(new Callback<AuthResponse>() {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
